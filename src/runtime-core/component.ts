@@ -1,8 +1,8 @@
-import { initProps } from "./componentProps";
-import { initSlots } from "./componentSlots";
-import { emit } from "./componentEmits";
-import { PublicInstanceProxyHandlers } from "./componentPublicInstance";
-import { proxyRefs, shallowReadonly } from "../reactivity/src";
+import { initProps } from './componentProps';
+import { initSlots } from './componentSlots';
+import { emit } from './componentEmits';
+import { PublicInstanceProxyHandlers } from './componentPublicInstance';
+import { proxyRefs, shallowReadonly } from '../reactivity/src';
 export function createComponentInstance(vnode, parent) {
   const instance = {
     type: vnode.type,
@@ -53,7 +53,7 @@ export function setupComponent(instance) {
 function setupStatefulComponent(instance) {
   // todo
   // 1. 先创建代理 proxy
-  console.log("创建 proxy");
+  console.log('创建 proxy');
 
   // proxy 对象其实是代理了 instance.ctx 对象
   // 我们在使用的时候需要使用 instance.proxy 对象
@@ -64,14 +64,16 @@ function setupStatefulComponent(instance) {
   const Component = instance.type;
   // 2. 调用 setup
 
-  // 调用 setup 的时候传入 props
+  // 组件定义时传入的setup项 ，调用 setup 的时候传入 props，setup的函数的参数有组件的配置项
   const { setup } = Component;
   if (setup) {
-    // 设置当前 currentInstance 的值
+    // 设置当前 currentInstance 的值，保证可以通过方法获取当前组件实例
     // 必须要在调用 setup 之前
     setCurrentInstance(instance);
 
+    // 定义 setup 函数的参数
     const setupContext = createSetupContext(instance);
+
     // 真实的处理场景里面应该是只在 dev 环境才会把 props 设置为只读的
     const setupResult =
       setup && setup(shallowReadonly(instance.props), setupContext);
@@ -86,7 +88,7 @@ function setupStatefulComponent(instance) {
 }
 
 function createSetupContext(instance) {
-  console.log("初始化 setup context");
+  console.log('初始化 setup context');
   return {
     attrs: instance.attrs,
     slots: instance.slots,
@@ -98,12 +100,12 @@ function createSetupContext(instance) {
 function handleSetupResult(instance, setupResult) {
   // setup 返回值不一样的话，会有不同的处理
   // 1. 看看 setupResult 是个什么
-  if (typeof setupResult === "function") {
+  if (typeof setupResult === 'function') {
     // 如果返回的是 function 的话，那么绑定到 render 上
     // 认为是 render 逻辑
     // setup(){ return ()=>(h("div")) }
     instance.render = setupResult;
-  } else if (typeof setupResult === "object") {
+  } else if (typeof setupResult === 'object') {
     // 返回的是一个对象的话
     // 先存到 setupState 上
     // 先使用 @vue/reactivity 里面的 proxyRefs

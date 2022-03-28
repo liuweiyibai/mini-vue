@@ -1,12 +1,12 @@
 // 源码里面这些接口是由 runtime-dom 来实现
 // 这里先简单实现
 
-import { isOn } from "../shared";
-import { createRenderer } from "../runtime-core";
+import { isOn } from '../shared';
+import { createRenderer } from '../runtime-core';
 
 // 后面也修改成和源码一样的实现
 function createElement(type) {
-  console.log("CreateElement", type);
+  console.log('CreateElement', type);
   const element = document.createElement(type);
   return element;
 }
@@ -20,7 +20,7 @@ function setText(node, text) {
 }
 
 function setElementText(el, text) {
-  console.log("SetElementText", el, text);
+  console.log('SetElementText', el, text);
   el.textContent = text;
 }
 
@@ -54,7 +54,7 @@ function patchProp(el, key, preValue, nextValue) {
       }
     }
   } else {
-    if (nextValue === null || nextValue === "") {
+    if (nextValue === null || nextValue === '') {
       el.removeAttribute(key);
     } else {
       el.setAttribute(key, nextValue);
@@ -63,7 +63,7 @@ function patchProp(el, key, preValue, nextValue) {
 }
 
 function insert(child, parent, anchor = null) {
-  console.log("Insert");
+  console.log('Insert');
   parent.insertBefore(child, anchor);
 }
 
@@ -76,6 +76,7 @@ function remove(child) {
 
 let renderer;
 
+// 延迟创建渲染器，为了拆包配合摇树优化
 function ensureRenderer() {
   // 如果 renderer 有值的话，那么以后都不会初始化了
   return (
@@ -96,4 +97,4 @@ export const createApp = (...args) => {
   return ensureRenderer().createApp(...args);
 };
 
-export * from "../runtime-core";
+export * from '../runtime-core';

@@ -1,6 +1,6 @@
-import { ShapeFlags } from "../shared";
+import { ShapeFlags } from '../shared';
 
-export { createVNode as createElementVNode }
+export { createVNode as createElementVNode };
 
 export const createVNode = function (
   type: any,
@@ -26,7 +26,7 @@ export const createVNode = function (
   // 基于 children 再次设置 shapeFlag
   if (Array.isArray(children)) {
     vnode.shapeFlag |= ShapeFlags.ARRAY_CHILDREN;
-  } else if (typeof children === "string") {
+  } else if (typeof children === 'string') {
     vnode.shapeFlag |= ShapeFlags.TEXT_CHILDREN;
   }
 
@@ -36,7 +36,7 @@ export const createVNode = function (
 };
 
 export function normalizeChildren(vnode, children) {
-  if (typeof children === "object") {
+  if (typeof children === 'object') {
     // 暂时主要是为了标识出 slots_children 这个类型来
     // 暂时我们只有 element 类型和 component 类型的组件
     // 所以我们这里除了 element ，那么只要是 component 的话，那么children 肯定就是 slots 了
@@ -49,13 +49,13 @@ export function normalizeChildren(vnode, children) {
   }
 }
 // 用 symbol 作为唯一标识
-export const Text = Symbol("Text");
-export const Fragment = Symbol("Fragment");
+export const Text = Symbol('Text');
+export const Fragment = Symbol('Fragment');
 
 /**
  * @private
  */
-export function createTextVNode(text: string = " ") {
+export function createTextVNode(text: string = ' ') {
   return createVNode(Text, {}, text);
 }
 
@@ -63,7 +63,7 @@ export function createTextVNode(text: string = " ") {
 // 其目的是为了让 child 支持多种格式
 export function normalizeVNode(child) {
   // 暂时只支持处理 child 为 string 和 number 的情况
-  if (typeof child === "string" || typeof child === "number") {
+  if (typeof child === 'string' || typeof child === 'number') {
     return createVNode(Text, null, String(child));
   } else {
     return child;
@@ -72,7 +72,7 @@ export function normalizeVNode(child) {
 
 // 基于 type 来判断是什么类型的组件
 function getShapeFlag(type: any) {
-  return typeof type === "string"
+  return typeof type === 'string'
     ? ShapeFlags.ELEMENT
     : ShapeFlags.STATEFUL_COMPONENT;
 }

@@ -1,9 +1,9 @@
-import { h, ref } from "../../lib/mini-vue.esm.js";
+import { h, ref } from '../../lib/mini-vue.esm.js';
 
 const count = ref(0);
 
 const HelloWorld = {
-  name: "HelloWorld",
+  name: 'HelloWorld',
   setup() {},
   // TODO 第一个小目标
   // 可以在使用 template 只需要有一个插值表达式即
@@ -14,18 +14,24 @@ const HelloWorld = {
   // `,
   render() {
     return h(
-      "div",
-      { tId: "helloWorld" },
+      'div',
+      { tId: 'helloWorld' },
       `hello world: count: ${count.value}`
     );
   },
 };
 
 export default {
-  name: "App",
+  name: 'App',
+  props: {
+    props1: {
+      type: String,
+      default: 'props1',
+    },
+  },
   setup() {},
 
   render() {
-    return h("div", { tId: 1 }, [h("p", {}, "主页"), h(HelloWorld)]);
+    return h('div', { tId: 1 }, [h('p', {}, '主页'), h(HelloWorld)]);
   },
 };

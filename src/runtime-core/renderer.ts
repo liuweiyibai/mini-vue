@@ -1,11 +1,11 @@
-import { ShapeFlags } from "../shared";
-import { createComponentInstance } from "./component";
-import { queueJob } from "./scheduler";
-import { effect } from "../reactivity/src";
-import { setupComponent } from "./component";
-import { Fragment, normalizeVNode, Text } from "./vnode";
-import { shouldUpdateComponent } from "./componentRenderUtils";
-import { createAppAPI } from "./createApp";
+import { ShapeFlags } from '../shared';
+import { createComponentInstance } from './component';
+import { queueJob } from './scheduler';
+import { effect } from '../reactivity/src';
+import { setupComponent } from './component';
+import { Fragment, normalizeVNode, Text } from './vnode';
+import { shouldUpdateComponent } from './componentRenderUtils';
+import { createAppAPI } from './createApp';
 
 export function createRenderer(options) {
   const {
@@ -19,7 +19,8 @@ export function createRenderer(options) {
   } = options;
 
   const render = (vnode, container) => {
-    debug.mainPath("调用 patch")();
+    debug.mainPath('调用 patch')();
+    // 老的 vnode，新生成的 vnode，容器，比较新老 vnode，匹配出更新
     patch(null, vnode, container);
   };
 
@@ -30,8 +31,7 @@ export function createRenderer(options) {
     anchor = null,
     parentComponent = null
   ) {
-    // 基于 n2 的类型来判断
-    // 因为 n2 是新的 vnode
+    // patch 时基于 n2 的类型来判断，因为 n2 是新的 vnode
     const { type, shapeFlag } = n2;
     switch (type) {
       case Text:
@@ -44,10 +44,10 @@ export function createRenderer(options) {
       default:
         // 这里就基于 shapeFlag 来处理
         if (shapeFlag & ShapeFlags.ELEMENT) {
-          console.log("处理 element");
+          console.log('处理 element');
           processElement(n1, n2, container, anchor, parentComponent);
         } else if (shapeFlag & ShapeFlags.STATEFUL_COMPONENT) {
-          console.log("处理 component");
+          console.log('处理 component');
           processComponent(n1, n2, container, parentComponent);
         }
     }
@@ -57,17 +57,17 @@ export function createRenderer(options) {
     // 只需要渲染 children ，然后给添加到 container 内
     if (!n1) {
       // 初始化 Fragment 逻辑点
-      console.log("初始化 Fragment 类型的节点");
+      console.log('初始化 Fragment 类型的节点');
       mountChildren(n2.children, container);
     }
   }
 
   function processText(n1, n2, container) {
-    console.log("处理 Text 节点");
+    console.log('处理 Text 节点');
     if (n1 === null) {
       // n1 是 null 说明是 init 的阶段
       // 基于 createText 创建出 text 节点，然后使用 insert 添加到 el 内
-      console.log("初始化 Text 类型的节点");
+      console.log('初始化 Text 类型的节点');
       hostInsert((n2.el = hostCreateText(n2.children as string)), container);
     } else {
       // update
@@ -77,7 +77,7 @@ export function createRenderer(options) {
       // 注意，这里一定要记得把 n1.el 赋值给 n2.el, 不然后续是找不到值的
       const el = (n2.el = n1.el!);
       if (n2.children !== n1.children) {
-        console.log("更新 Text 类型的节点");
+        console.log('更新 Text 类型的节点');
         hostSetText(el, n2.children as string);
       }
     }
@@ -96,9 +96,9 @@ export function createRenderer(options) {
     const oldProps = (n1 && n1.props) || {};
     const newProps = n2.props || {};
     // 应该更新 element
-    console.log("应该更新 element");
-    console.log("旧的 vnode", n1);
-    console.log("新的 vnode", n2);
+    console.log('应该更新 element');
+    console.log('旧的 vnode', n1);
+    console.log('新的 vnode', n2);
 
     // 需要把 el 挂载到新的 vnode
     const el = (n2.el = n1.el);
@@ -153,7 +153,7 @@ export function createRenderer(options) {
     // 如果不一样的话直接重新设置一下 text 即可
     if (shapeFlag & ShapeFlags.TEXT_CHILDREN) {
       if (c2 !== c1) {
-        console.log("类型为 text_children, 当前需要更新");
+        console.log('类型为 text_children, 当前需要更新');
         hostSetElementText(container, c2 as string);
       }
     } else {
@@ -189,13 +189,13 @@ export function createRenderer(options) {
       const nextChild = c2[i];
 
       if (!isSameVNodeType(prevChild, nextChild)) {
-        console.log("两个 child 不相等(从左往右比对)");
+        console.log('两个 child 不相等(从左往右比对)');
         console.log(`prevChild:${prevChild}`);
         console.log(`nextChild:${nextChild}`);
         break;
       }
 
-      console.log("两个 child 相等，接下来对比这两个 child 节点(从左往右比对)");
+      console.log('两个 child 相等，接下来对比这两个 child 节点(从左往右比对)');
       patch(prevChild, nextChild, container, parentAnchor, parentComponent);
       i++;
     }
@@ -206,12 +206,12 @@ export function createRenderer(options) {
       const nextChild = c2[e2];
 
       if (!isSameVNodeType(prevChild, nextChild)) {
-        console.log("两个 child 不相等(从右往左比对)");
+        console.log('两个 child 不相等(从右往左比对)');
         console.log(`prevChild:${prevChild}`);
         console.log(`nextChild:${nextChild}`);
         break;
       }
-      console.log("两个 child 相等，接下来对比这两个 child 节点(从右往左比对)");
+      console.log('两个 child 相等，接下来对比这两个 child 节点(从右往左比对)');
       patch(prevChild, nextChild, container, parentAnchor, parentComponent);
       e1--;
       e2--;
@@ -303,7 +303,7 @@ export function createRenderer(options) {
           hostRemove(prevChild.el);
         } else {
           // 新老节点都存在
-          console.log("新老节点都存在");
+          console.log('新老节点都存在');
           // 把新节点的索引和老的节点的索引建立映射关系
           // i + 1 是因为 i 有可能是0 (0 的话会被认为新节点在老的节点中不存在)
           newIndexToOldIndexMap[newIndex - s2] = i + 1;
@@ -407,26 +407,26 @@ export function createRenderer(options) {
 
     // todo
     // 触发 beforeMount() 钩子
-    console.log("vnodeHook  -> onVnodeBeforeMount");
-    console.log("DirectiveHook  -> beforeMount");
-    console.log("transition  -> beforeEnter");
+    console.log('vnodeHook  -> onVnodeBeforeMount');
+    console.log('DirectiveHook  -> beforeMount');
+    console.log('transition  -> beforeEnter');
 
     // 插入
     hostInsert(el, container, anchor);
 
     // todo
     // 触发 mounted() 钩子
-    console.log("vnodeHook  -> onVnodeMounted");
-    console.log("DirectiveHook  -> mounted");
-    console.log("transition  -> enter");
+    console.log('vnodeHook  -> onVnodeMounted');
+    console.log('DirectiveHook  -> mounted');
+    console.log('transition  -> enter');
   }
 
   function mountChildren(children, container) {
-    children.forEach((VNodeChild) => {
+    children.forEach(VNodeChild => {
       // todo
       // 这里应该需要处理一下 vnodeChild
       // 因为有可能不是 vnode 类型
-      console.log("mountChildren:", VNodeChild);
+      console.log('mountChildren:', VNodeChild);
       patch(null, VNodeChild, container);
     });
   }
@@ -443,7 +443,7 @@ export function createRenderer(options) {
 
   // 组件的更新
   function updateComponent(n1, n2, container) {
-    console.log("更新组件", n1, n2);
+    console.log('更新组件', n1, n2);
     // 更新组件实例引用
     const instance = (n2.component = n1.component);
     // 先看看这个组件是否应该更新
@@ -467,8 +467,9 @@ export function createRenderer(options) {
     }
   }
 
+  // patch 时，当第一次挂载组件时调用
   function mountComponent(initialVNode, container, parentComponent) {
-    // 1. 先创建一个 component instance
+    // 1. 通过vnode先创建一个 component instance
     const instance = (initialVNode.component = createComponentInstance(
       initialVNode,
       parentComponent
@@ -505,7 +506,7 @@ export function createRenderer(options) {
         const subTree = (instance.subTree = normalizeVNode(
           instance.render.call(proxyToUse, proxyToUse)
         ));
-        console.log("subTree", subTree);
+        console.log('subTree', subTree);
 
         // todo
         console.log(`${instance.type.name}:触发 beforeMount hook`);
@@ -590,9 +591,9 @@ export function createRenderer(options) {
     instance.next = null;
 
     const { props } = nextVNode;
-    console.log("更新组件的 props", props);
+    console.log('更新组件的 props', props);
     instance.props = props;
-    console.log("更新组件的 slots");
+    console.log('更新组件的 slots');
     // TODO 更新组件的 slots
     // 需要重置 vnode
   }
